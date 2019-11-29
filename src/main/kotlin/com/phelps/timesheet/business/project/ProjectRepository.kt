@@ -10,6 +10,7 @@ import java.sql.ResultSet
 interface ProjectRepository {
     fun create(project : Project)
     fun list() : List<Project>
+    fun listActive() : List<Project>
     fun getById(id: Long) : Project
     fun update(id : Long, project : Project) : Project
     fun disable(id : Long)
@@ -38,6 +39,11 @@ class ProjectRepositoryImpl(@Autowired var jdbcTemplate: JdbcTemplate) : Project
     }
 
     override fun list(): List<Project> = jdbcTemplate.query("SELECT ID,NAME,ACTIVE FROM project"
+    ) { rs: ResultSet, _: Int ->
+        Project(rs.getLong("ID"), rs.getString("NAME"), rs.getBoolean("active"))
+    }
+
+    override fun listActive(): List<Project> = jdbcTemplate.query("SELECT ID,NAME,ACTIVE FROM project WHERE active is true "
     ) { rs: ResultSet, _: Int ->
         Project(rs.getLong("ID"), rs.getString("NAME"), rs.getBoolean("active"))
     }

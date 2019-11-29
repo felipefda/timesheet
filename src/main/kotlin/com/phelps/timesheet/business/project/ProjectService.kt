@@ -1,6 +1,7 @@
 package com.phelps.timesheet.business.project
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.InvalidDataAccessApiUsageException
 import org.springframework.stereotype.Service
 import java.lang.Exception
 
@@ -8,6 +9,7 @@ interface ProjectService{
     fun create(project : Project)
     fun getById(id: Long) : Project
     fun list() : List<Project>
+    fun listActive() : List<Project>
     fun update(id : Long, project : Project) : Project
     fun changeStatus(id : Long)
     fun delete(id : Long)
@@ -26,6 +28,10 @@ class ProjectServiceImpl : ProjectService {
         return this.repository.list()
     }
 
+    override fun listActive(): List<Project> {
+        return this.repository.listActive()
+    }
+
     override fun update(id: Long, project: Project): Project {
         return this.repository.update(id,project)
     }
@@ -39,11 +45,12 @@ class ProjectServiceImpl : ProjectService {
         }
     }
 
+    @Throws(InvalidDataAccessApiUsageException::class)
     override fun delete(id: Long) {
         try{
             this.repository.delete(id)
         }catch (e : Exception){
-
+            throw InvalidDataAccessApiUsageException(e.message);
         }
 
     }

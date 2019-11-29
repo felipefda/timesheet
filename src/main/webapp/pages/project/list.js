@@ -43,14 +43,14 @@ export default class ProjectList extends React.Component {
         this.getList();
       })
       .catch(err => {
-        return null;
+        alert('Problem on remove project. Maybe it`s in use now?');
       });
   }
 
   render() {
 
     return (
-      <Layout>
+      <Layout messagetext=''>
         <div>
           <h1 className="title">Projects</h1>
 
@@ -83,9 +83,9 @@ export default class ProjectList extends React.Component {
                     <td>{row.name}</td>
                     <td>
                       <Link href={{ pathname: '/project/form/', query: { id: row.id, name: row.name } }}>
-                        <button className="button"><i className="far fa-edit fa-lg"></i> Edit</button>
+                        <button className="button"><i className="far fa-edit fa-lg"></i> </button>
                       </Link>
-                      <button className="button" onClick={this.delete.bind(this,row.id)}><i className="far fa-trash-alt fa-lg"></i> Remove</button>
+                      <button className="button" onClick={this.delete.bind(this,row.id)}><i className="far fa-trash-alt fa-lg"></i> </button>
                       <button className="button" onClick={this.changeStatus.bind(this,row.id)}>
                         {row.active ? (
                           <i className="fas fa-toggle-on fa-lg"></i>

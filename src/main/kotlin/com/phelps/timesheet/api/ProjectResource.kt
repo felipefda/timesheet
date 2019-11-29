@@ -17,6 +17,11 @@ class ProjectResource {
         return service.list()
     }
 
+    @GetMapping("/active")
+    fun listActive() : List<Project>{
+        return service.listActive()
+    }
+
     @PostMapping("")
     fun save(@RequestBody project : Project){
         service.create(project)
