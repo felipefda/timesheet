@@ -12,6 +12,7 @@ class Activity{
     var datew : String
     var startTime : String
     var endTime : String
+    var timeDiff : String
     var type : ActivityType
 
     constructor(){
@@ -22,6 +23,7 @@ class Activity{
         this.datew = ""
         this.startTime = ""
         this.endTime = ""
+        this.timeDiff = ""
         this.type = ActivityType.REGULAR
     }
 
@@ -33,6 +35,7 @@ class Activity{
         datew: String,
         startTime: String,
         endTime: String,
+        timeDiff: String,
         type: String
     ) {
         this.id = id
@@ -42,6 +45,7 @@ class Activity{
         this.datew = datew
         this.startTime = startTime
         this.endTime = endTime
+        this.timeDiff = timeDiff
         this.type = ActivityType.valueOf(type)
     }
 

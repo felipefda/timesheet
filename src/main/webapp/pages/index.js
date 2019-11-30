@@ -273,8 +273,7 @@ export default class Index extends React.Component {
                       <td align="center">{row.type}</td>
                       <td align="center">{row.projectName}</td>
                       <td align="center">{row.datew}</td>
-                      <td align="center">{row.startTime}</td>
-                      <td align="center">{row.endTime}</td>
+                      <td align="center" colSpan="2">{row.startTime} to {row.endTime} ({row.timeDiff})</td>
                       <td align="left">{row.description}</td>
                       <td align="center">
                         <button className="button is-white is-small" type="button" onClick={this.edit.bind(this, row)}><i className="fas fa-pencil-alt"></i></button>
