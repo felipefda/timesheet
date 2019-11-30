@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 
 interface ActivityService{
     fun create(activity: Activity)
+    fun update(id: Long, activity: Activity)
     fun list() : List<Activity>
     fun delete(id : Long)
 }
@@ -16,6 +17,10 @@ class ActicityServiceImpl : ActivityService {
 
     override fun create(activity: Activity) {
         this.repository.create(activity)
+    }
+
+    override fun update(id: Long, activity: Activity) {
+        this.repository.update(id,activity)
     }
 
     override fun list(): List<Activity> {

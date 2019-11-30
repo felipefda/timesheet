@@ -20,23 +20,40 @@ export default class Index extends React.Component {
       endTime: '',
       description: '',
       messagetext: '',
-      messagetype: ''
+      messagetype: '',
+      editmode: 0,
+      id: null
 
     };
 
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.cancel = this.cancel.bind(this);
 
   }
 
   componentDidMount() {
     this.getList();
     this.getProjectList();
+    this.reloadForm();
+  }
+
+  cancel() {
+    this.reloadForm();
+  }
+
+  reloadForm() {
     this.setState({
       datew: this.formatDate(new Date()),
       startTime: '07:30',
       endTime: '17:30',
+      editmode: 0,
+      id: null,
+      type: 'REGULAR',
+      description: '',
+      messagetext : '',
+      messagetype : ''
     })
   }
 
@@ -48,8 +65,8 @@ export default class Index extends React.Component {
       })
       .catch(err => {
         this.setState({
-          messagetext : 'Erro ao listar atividades',
-          messagetype : 'notification is-danger'
+          messagetext: 'Not possible to list the activities',
+          messagetype: 'notification is-danger'
         });
       });
   };
@@ -62,8 +79,8 @@ export default class Index extends React.Component {
       })
       .catch(err => {
         this.setState({
-          messagetext : 'Erro ao listar projetos',
-          messagetype : 'notification is-danger'
+          messagetext: 'Not possible to list the projects',
+          messagetype: 'notification is-danger'
         });
       });
   };
@@ -92,28 +109,61 @@ export default class Index extends React.Component {
   }
 
   handleSubmit(event) {
+    if(this.state.id != null){
+      API
+      .put("/activity/"+this.state.id, this.state)
+      .then(() => {
+        this.setState({
+          messagetext: 'Activity updated',
+          messagetype: 'notification is-success'
+        });
+        this.reloadForm();
+        this.getList();
+      })
+      .catch(err => {
+        console.log(`error aqui`, err);
+        this.setState({
+          messagetext: 'Not possible to update the activity',
+          messagetype: 'notification is-danger'
+        });
 
-
-    API
+      });
+    }else{
+      API
       .post("/activity", this.state)
       .then(() => {
         this.setState({
-          messagetext : 'Salva com sucesso',
-          messagetype : 'notification is-success'
+          messagetext: 'Saved...',
+          messagetype: 'notification is-success'
         });
         this.getList();
       })
       .catch(err => {
-        console.log(`error aqui`,err);
+        console.log(`error aqui`, err);
         this.setState({
-          messagetext : 'Erro ao salvar atividade',
-          messagetype : 'notification is-danger'
+          messagetext: 'Not possible to create the activity',
+          messagetype: 'notification is-danger'
         });
 
       });
+    }
+    
 
 
     event.preventDefault();
+  }
+
+  edit(row) {
+    this.setState({
+      editmode: 1,
+      id: row.id,
+      type: row.type,
+      projectId: row.projectId,
+      datew: row.datew,
+      startTime: row.startTime,
+      endTime: row.endTime,
+      description: row.description
+    });
   }
 
   delete(id) {
@@ -154,7 +204,7 @@ export default class Index extends React.Component {
                     <div className="field">
                       <div className="control">
                         <div className="select">
-                          <select name="type" onChange={this.handleInputChange}>
+                          <select name="type" value={this.state.type} onChange={this.handleInputChange}>
                             <option value="REGULAR">REGULAR</option>
                             <option value="EXTRA">EXTRA</option>
                           </select>
@@ -166,7 +216,7 @@ export default class Index extends React.Component {
                     <div className="field">
                       <div className="control">
                         <div className="select">
-                          <select name="projectId" onChange={this.handleInputChange}>
+                          <select name="projectId" value={this.state.projectId} onChange={this.handleInputChange}>
                             {this.state.projectList.map((row, i) => {
                               return (
                                 <option key={row.id} value={row.id}>{row.name}</option>
@@ -201,12 +251,20 @@ export default class Index extends React.Component {
                   <td>
                     <div className="field">
                       <div className="control">
-                        <input className="input" type="text" placeholder="" name="description" maxLength="255" onChange={this.handleInputChange} />
+                        <input className="input" type="text" placeholder="" name="description" maxLength="255" value={this.state.description} onChange={this.handleInputChange} />
                       </div>
                     </div>
                   </td>
-                  <td>
-                    <button className="button is-primary" type="submit">Add</button>
+                  <td width="10%">
+                    {this.state.editmode == 0 &&
+                      <button className="button is-primary" type="submit">Add</button>
+                    }
+                    {this.state.editmode == 1 &&
+                      <div>
+                        <button className="button is-small is-link" type="submit">Save</button>
+                        <button className="button is-small is-outlined" type="button" onClick={this.cancel.bind()}>Cancel</button>
+                      </div>
+                    }
                   </td>
                 </tr>
                 {this.state.list.map((row, i) => {
@@ -218,7 +276,10 @@ export default class Index extends React.Component {
                       <td align="center">{row.startTime}</td>
                       <td align="center">{row.endTime}</td>
                       <td align="left">{row.description}</td>
-                      <td align="center"><button className="button is-danger is-small" type="button" onClick={this.delete.bind(this, row.id)}><i className="fas fa-minus-circle"></i></button></td>
+                      <td align="center">
+                        <button className="button is-white is-small" type="button" onClick={this.edit.bind(this, row)}><i className="fas fa-pencil-alt"></i></button>
+                        <button className="button is-danger is-small" type="button" onClick={this.delete.bind(this, row.id)}><i className="fas fa-minus-circle"></i></button>
+                      </td>
                     </tr>
                   );
                 })}

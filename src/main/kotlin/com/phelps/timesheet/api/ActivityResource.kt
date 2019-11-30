@@ -22,6 +22,11 @@ class ActivityResource {
         service.create(activity)
     }
 
+    @PutMapping("/{id}")
+    fun update(@PathVariable id : Long, @RequestBody activity: Activity){
+        service.update(id,activity)
+    }
+
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id : Long) {
         service.delete(id)
